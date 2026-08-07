@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M. Sahil Singh — AI Full-Stack Engineer</title>
+<meta name="description" content="Full-stack AI engineer — Node.js, Python, React, LLM integrations (OpenAI, Anthropic, HuggingFace), RAG pipelines, and reinforcement learning.">
+<style>
+  :root{
+    --bg:#0a0b10;
+    --bg-panel:#111319;
+    --line:#20232e;
+    --ink:#eef0f6;
+    --ink-dim:#8b90a3;
+    --blue:#5b8dff;
+    --purple:#a78bfa;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.55;
+  }
+  a{color:inherit; text-decoration:none;}
+  ::selection{ background:var(--blue); color:#040509; }
+
+  /* subtle single background effect: soft glowing neuron mesh, low opacity */
+  #neuron-canvas{ position:fixed; inset:0; z-index:0; opacity:0.35; }
+  .content{ position:relative; z-index:1; }
+
+  nav{
+    position:sticky; top:0; z-index:20;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 6vw;
+    background:rgba(10,11,16,0.75);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{ font-family:var(--mono); font-size:0.95rem; letter-spacing:0.5px; color:var(--blue); }
+  .nav-links{ display:flex; gap:32px; }
+  .nav-links a{ font-size:0.9rem; color:var(--ink-dim); transition:color .2s; }
+  .nav-links a:hover{ color:var(--ink); }
+
+  header{
+    min-height:78vh; display:flex; align-items:center;
+    padding:60px 6vw; max-width:1150px; margin:0 auto;
+  }
+  .hero-grid{ display:flex; align-items:center; gap:52px; flex-wrap:wrap; }
+  .hero-text{ flex:1; min-width:300px; }
+
+  .avatar{
+    width:190px; height:190px; border-radius:50%;
+    object-fit:cover; object-position:50% 20%;
+    border:2px solid var(--line);
+    box-shadow:0 0 0 6px rgba(91,141,255,0.06), 0 20px 50px -20px rgba(91,141,255,0.35);
+    flex-shrink:0;
+  }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:0.85rem; letter-spacing:1.5px; text-transform:uppercase;
+    margin-bottom:18px; display:flex; align-items:center; gap:10px; color:var(--blue);
+  }
+  .eyebrow::before{
+    content:''; width:7px; height:7px; background:var(--blue); border-radius:50%;
+    box-shadow:0 0 10px var(--blue);
+  }
+  h1{ font-size:clamp(2.2rem, 5vw, 3.6rem); font-weight:700; line-height:1.08; letter-spacing:-1.5px; margin-bottom:20px; }
+  h1 span{
+    background:linear-gradient(120deg, var(--blue), var(--purple));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-desc{ max-width:580px; color:var(--ink-dim); font-size:1.05rem; margin-bottom:32px; }
+  .hero-links{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  .btn{
+    font-family:var(--mono); font-size:0.85rem; padding:12px 22px; border-radius:8px;
+    border:1px solid var(--line); transition:border-color .2s, color .2s, transform .15s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:linear-gradient(120deg, var(--blue), var(--purple)); color:#060810; border-color:transparent; font-weight:600; }
+  .btn-ghost{ color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--purple); color:var(--purple); }
+
+  section{ padding:80px 6vw; max-width:1150px; margin:0 auto; border-top:1px solid var(--line); position:relative; }
+  .section-head{ margin-bottom:44px; }
+  .section-num{ font-family:var(--mono); color:var(--blue); font-size:0.82rem; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+  h2{ font-size:clamp(1.6rem, 3vw, 2.2rem); font-weight:600; letter-spacing:-0.5px; }
+  .section-sub{ color:var(--ink-dim); max-width:600px; margin-top:12px; font-size:0.98rem; }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  .stats{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  .stat{ background:var(--bg-panel); padding:28px 26px; }
+  .stat-num{ font-family:var(--mono); font-size:1.7rem; font-weight:500; color:var(--blue); }
+  .stat-label{ color:var(--ink-dim); font-size:0.83rem; margin-top:6px; }
+
+  .skills-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
+  .skill-card{ background:var(--bg-panel); border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .skill-cat{ font-family:var(--mono); font-size:0.72rem; color:var(--blue); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .skill-tags{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tag{ font-family:var(--mono); font-size:0.76rem; color:var(--ink-dim); border:1px solid var(--line); padding:5px 10px; border-radius:6px; }
+  .tag.gap{ color:#e0a45c; border-color:rgba(224,164,92,0.3); }
+
+  .projects{ display:grid; gap:16px; }
+  .project-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:26px;
+    display:grid; grid-template-columns:auto 1fr; gap:22px; transition:border-color .2s;
+  }
+  .project-card:hover{ border-color:var(--blue); }
+  .project-index{ font-family:var(--mono); color:var(--ink-dim); font-size:0.85rem; }
+  .project-year{ font-family:var(--mono); color:var(--blue); font-size:0.75rem; float:right; }
+  .project-title{ font-size:1.1rem; font-weight:600; margin-bottom:4px; }
+  .project-stack{ font-family:var(--mono); font-size:0.72rem; color:var(--purple); margin-bottom:10px; }
+  .project-desc{ color:var(--ink-dim); font-size:0.9rem; margin-bottom:10px; }
+  .project-use{ color:var(--ink); font-size:0.85rem; margin-bottom:12px; border-left:2px solid var(--blue); padding-left:10px; }
+  .project-links a{ font-family:var(--mono); font-size:0.8rem; color:var(--blue); border-bottom:1px solid transparent; }
+  .project-links a:hover{ border-color:var(--blue); }
+
+  .exp-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:26px 28px;
+    display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  .exp-role{ font-weight:600; font-size:1.02rem; }
+  .exp-org{ color:var(--ink-dim); font-size:0.88rem; margin-top:2px; }
+  .exp-desc{ color:var(--ink-dim); font-size:0.9rem; margin-top:8px; max-width:640px; }
+  .exp-date{ font-family:var(--mono); color:var(--blue); font-size:0.8rem; white-space:nowrap; }
+
+  .badge-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  .badge{ font-family:var(--mono); font-size:0.76rem; color:var(--ink-dim); border:1px solid var(--line); padding:6px 12px; border-radius:20px; }
+
+  .contact-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:14px; }
+  .contact-card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px; padding:22px;
+    display:flex; flex-direction:column; gap:8px; transition:border-color .2s;
+  }
+  .contact-card:hover{ border-color:var(--blue); }
+  .contact-icon{ font-size:1.3rem; }
+  .contact-label{ font-family:var(--mono); font-size:0.75rem; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px; }
+  .contact-value{ font-size:0.98rem; word-break:break-word; }
+
+  footer{
+    padding:36px 6vw 56px; text-align:center; color:var(--ink-dim);
+    font-family:var(--mono); font-size:0.78rem; border-top:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    nav{ padding:16px 5vw; }
+    .nav-links{ gap:16px; }
+    .project-card{ grid-template-columns:1fr; }
+    .avatar{ width:140px; height:140px; }
+    header{ padding:48px 6vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { scroll-behavior:auto !important; }
+    .reveal{ opacity:1 !important; transform:none !important; }
+  }
+
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<canvas id="neuron-canvas"></canvas>
+
+<div class="content">
+
+  <nav>
+    <div class="logo">M.SS // ai-engineer</div>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header>
+    <div class="hero-grid">
+      <img class="avatar" src="assets/profile.jpg" alt="M. Sahil Singh">
+      <div class="hero-text">
+        <div class="eyebrow">Final-year B.Tech, NIT Warangal · Open to opportunities</div>
+        <h1>M. Sahil Singh<br><span>Full-Stack AI Engineer</span></h1>
+        <p class="hero-desc">
+          Building production-grade systems across the stack — Node.js and Python backends, React frontends,
+          and LLM integrations using OpenAI, Anthropic, and HuggingFace. Hands-on with RAG pipelines,
+          LLM agents, and reinforcement learning, deployed on Docker and AWS.
+        </p>
+        <div class="hero-links">
+          <a class="btn btn-primary" href="https://github.com/sahil123-57" target="_blank" rel="noopener">View GitHub →</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/m-sahil-singh-rajput-4b0881265/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-ghost" href="mailto:sahilsinghrajput677@gmail.com">Email</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="stats" style="border-top:none;">
+    <div class="stats reveal">
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Production AI projects shipped</div></div>
+      <div class="stat"><div class="stat-num">90%+</div><div class="stat-label">RAG retrieval accuracy, 10K-page corpora</div></div>
+      <div class="stat"><div class="stat-num">800+</div><div class="stat-label">DSA problems solved</div></div>
+      <div class="stat"><div class="stat-num">Top 1.5%</div><div class="stat-label">JEE Mains 2021, AIR ~13,000</div></div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head reveal">
+      <div class="section-num">01 — Skills</div>
+      <h2>Technical toolkit</h2>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-card">
+        <div class="skill-cat">Languages</div>
+        <div class="skill-tags"><span class="tag">Python</span><span class="tag">Node.js</span><span class="tag">C++</span><span class="tag">SQL</span><span class="tag">GraphQL</span><span class="tag">Bash</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">Frontend</div>
+        <div class="skill-tags"><span class="tag">React.js</span><span class="tag">Streamlit</span><span class="tag">Gradio</span><span class="tag gap">React Native / Flutter — exposure only</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">Backend</div>
+        <div class="skill-tags"><span class="tag">Node.js + Express</span><span class="tag">FastAPI</span><span class="tag">REST APIs</span><span class="tag">JWT Auth</span><span class="tag">Async Queues</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">Databases</div>
+        <div class="skill-tags"><span class="tag">PostgreSQL</span><span class="tag">MongoDB</span><span class="tag">FAISS</span><span class="tag">Pinecone</span><span class="tag">ChromaDB</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">AI / ML</div>
+        <div class="skill-tags"><span class="tag">OpenAI API</span><span class="tag">Anthropic API</span><span class="tag">Gemini API</span><span class="tag">LangChain</span><span class="tag">LlamaIndex</span><span class="tag">HuggingFace</span><span class="tag">PyTorch</span><span class="tag">TensorFlow</span><span class="tag">RAG</span><span class="tag">LoRA / QLoRA</span><span class="tag">LLM Agents</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">DevOps / Cloud</div>
+        <div class="skill-tags"><span class="tag">Docker</span><span class="tag">AWS (EC2, RDS, Lambda)</span><span class="tag">Azure — exposure</span><span class="tag">GitHub Actions CI/CD</span><span class="tag">Git</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">Analytics</div>
+        <div class="skill-tags"><span class="tag">Power BI</span><span class="tag">Google Analytics</span><span class="tag gap">Tableau — gap to address</span></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cat">Other</div>
+        <div class="skill-tags"><span class="tag">LangSmith</span><span class="tag">Arize Phoenix</span><span class="tag">Scikit-learn</span><span class="tag">Pandas</span><span class="tag">NumPy</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="section-head reveal">
+      <div class="section-num">02 — Work</div>
+      <h2>Featured projects</h2>
+      <p class="section-sub">Four production-oriented systems spanning full-stack infrastructure, retrieval-augmented generation, agentic tool-use, and reinforcement learning.</p>
+    </div>
+    <div class="projects reveal">
+      <div class="project-card">
+        <div class="project-index">01</div>
+        <div>
+          <span class="project-year">2026</span>
+          <div class="project-title">AI-Augmented Full-Stack Chat Platform</div>
+          <div class="project-stack">Node.js · Express · PostgreSQL · Docker · OpenAI API · JWT · AWS EC2</div>
+          <div class="project-desc">Fault-tolerant chat backend with JWT authentication, horizontal database sharding, and asynchronous message queues, with OpenAI API integration for AI-assisted replies. Containerized with Docker and validated for horizontal scaling on AWS EC2; PostgreSQL schema indexed for sub-50ms queries, with a GraphQL endpoint for flexible client access.</div>
+          <div class="project-use">Designed for: messaging products that need reliable delivery at scale plus an AI reply layer — the kind of infrastructure behind customer support or team chat tools.</div>
+          <div class="project-links"><a href="https://github.com/sahil123-57" target="_blank" rel="noopener">View repo →</a></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-index">02</div>
+        <div>
+          <span class="project-year">2024</span>
+          <div class="project-title">RAG Document Q&amp;A Assistant</div>
+          <div class="project-stack">LangChain · GPT-4 · FAISS · FastAPI · Streamlit · AWS</div>
+          <div class="project-desc">End-to-end Retrieval-Augmented Generation system ingesting PDFs into a FAISS vector store, achieving 90%+ retrieval accuracy across 10,000-page corpora. Deployed on AWS EC2 with per-user sessions; hallucinations cut 35% through re-ranking and prompt guards, with streaming responses and conversation memory via FastAPI.</div>
+          <div class="project-use">Designed for: answering questions over large document sets — research papers, policy manuals, or internal knowledge bases — with plagiarism-detection hooks for academic-integrity use cases.</div>
+          <div class="project-links"><a href="https://github.com/sahil123-57" target="_blank" rel="noopener">View repo →</a></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-index">03</div>
+        <div>
+          <span class="project-year">2026</span>
+          <div class="project-title">LLM-Powered Agentic Trading System</div>
+          <div class="project-stack">LangChain Agents · GPT-4 · Python · yFinance · Pandas</div>
+          <div class="project-desc">Multi-tool LLM agent that retrieves live OHLCV market data, runs RSI/MACD/Bollinger Bands technical analysis, and generates chain-of-thought trade rationale through function calling. Achieved 12% simulated portfolio growth in testing.</div>
+          <div class="project-use">Designed for: automated, explainable market analysis — the tool-use pattern applies directly to AI-powered assessment and feedback pipelines outside of finance.</div>
+          <div class="project-links"><a href="https://github.com/sahil123-57" target="_blank" rel="noopener">View repo →</a></div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-index">04</div>
+        <div>
+          <span class="project-year">2025</span>
+          <div class="project-title">Dynamic Pricing Engine — Dueling DDQN + LLM Explainer</div>
+          <div class="project-stack">PyTorch · Reinforcement Learning · OpenAI API · Gym</div>
+          <div class="project-desc">Reinforcement-learning pricing agent (Dueling DDQN) layered with a GPT-4 explainer that translates each pricing decision into business-readable rationale. Delivered an 18% revenue lift through optimized pricing actions, with a Power BI dashboard for stakeholder reporting.</div>
+          <div class="project-use">Designed for: e-commerce or subscription businesses that want dynamic pricing decisions that are both optimized and explainable to non-technical stakeholders.</div>
+          <div class="project-links"><a href="https://github.com/sahil123-57" target="_blank" rel="noopener">View repo →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="section-head reveal">
+      <div class="section-num">03 — Experience</div>
+      <h2>Where I've worked</h2>
+    </div>
+    <div class="exp-card reveal">
+      <div>
+        <div class="exp-role">Power Systems Simulation Intern</div>
+        <div class="exp-org">NIT Warangal</div>
+        <div class="exp-desc">Built MATLAB/Simulink models for AC-DC conversion and PWM strategy analysis, improving waveform stability — engineering rigor applied to complex, safety-critical systems.</div>
+      </div>
+      <div class="exp-date">Jun – Aug 2024</div>
+    </div>
+
+    <div class="section-head reveal" style="margin-top:52px;">
+      <div class="section-num">Education</div>
+      <h2>B.Tech, Electrical &amp; Electronics Engineering</h2>
+      <p class="section-sub">NIT Warangal · 2022 – 2026</p>
+    </div>
+
+    <div class="reveal">
+      <div class="section-num" style="margin-top:40px;">Achievements &amp; Certifications</div>
+      <div class="badge-row">
+        <span class="badge">JEE Mains 2021 — 98.48 percentile (AIR ~13,000)</span>
+        <span class="badge">800+ DSA problems — LeetCode &amp; GFG</span>
+        <span class="badge">Goldman Sachs Risk Job Simulation</span>
+        <span class="badge">Commonwealth Bank SWE Simulation</span>
+        <span class="badge">Microsoft Power BI using AI</span>
+        <span class="badge">Google Analytics</span>
+        <span class="badge">AI-Powered Ads</span>
+        <span class="badge">AI-Powered Sentiment Analysis</span>
+        <span class="badge">SQL using AI</span>
+        <span class="badge">BE10x AI Tools Workshop</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-head reveal">
+      <div class="section-num">04 — Contact</div>
+      <h2>Find me here</h2>
+    </div>
+    <div class="contact-grid reveal">
+      <a class="contact-card" href="https://github.com/sahil123-57" target="_blank" rel="noopener">
+        <div class="contact-icon">⌥</div><div class="contact-label">GitHub</div><div class="contact-value">sahil123-57</div>
+      </a>
+      <a class="contact-card" href="https://www.linkedin.com/in/m-sahil-singh-rajput-4b0881265/" target="_blank" rel="noopener">
+        <div class="contact-icon">in</div><div class="contact-label">LinkedIn</div><div class="contact-value">m-sahil-singh-rajput</div>
+      </a>
+      <a class="contact-card" href="mailto:sahilsinghrajput677@gmail.com">
+        <div class="contact-icon">✉</div><div class="contact-label">Email</div><div class="contact-value">sahilsinghrajput677@gmail.com</div>
+      </a>
+      <a class="contact-card" href="tel:+917893280071">
+        <div class="contact-icon">☎</div><div class="contact-label">Phone</div><div class="contact-value">+91 7893280071</div>
+      </a>
+    </div>
+  </section>
+
+  <footer>Built with HTML &amp; CSS — last updated 2026</footer>
+
+</div>
+
+<script>
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* single subtle background effect: static-ish glowing mesh, gentle drift, no mouse tracking, no pulses */
+  const canvas = document.getElementById('neuron-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, nodes;
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = document.documentElement.scrollHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  const NODE_COUNT = Math.min(45, Math.floor(w/28));
+  nodes = Array.from({length: NODE_COUNT}, () => ({
+    x: Math.random()*w, y: Math.random()*h,
+    vx:(Math.random()-0.5)*0.12, vy:(Math.random()-0.5)*0.12,
+    r: Math.random()*1.4 + 1
+  }));
+  const LINK_DIST = 140;
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    for(const n of nodes){
+      if(!prefersReduced){
+        n.x += n.vx; n.y += n.vy;
+        if(n.x<0||n.x>w) n.vx*=-1;
+        if(n.y<0||n.y>h) n.vy*=-1;
+      }
+    }
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i], b=nodes[j];
+        const dist=Math.hypot(a.x-b.x, a.y-b.y);
+        if(dist<LINK_DIST){
+          ctx.strokeStyle = `rgba(110,140,255,${0.10*(1-dist/LINK_DIST)})`;
+          ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+    }
+    for(const n of nodes){
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(120,150,255,0.6)'; ctx.fill();
+    }
+    if(!prefersReduced) requestAnimationFrame(step);
+  }
+  step();
+
+  /* scroll reveal only */
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !prefersReduced){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+      });
+    }, { threshold:0.12 });
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in-view'));
+  }
+</script>
+
+</body>
+</html>
